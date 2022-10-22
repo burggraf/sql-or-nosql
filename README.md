@@ -49,4 +49,5 @@ For each day I also track my current weight along with any notes for the day:
 | Jan 22 | 169.8  | Jogged past a McDonald's today. It was hard. |
 | Feb 01 | 168.0  | I feel better, but sure miss all that greasy food. |
 
-
+### Entering All That Data
+That's a lot of different data that needs to be gathered, stored, retrieved, and later analyzed.  It's organzied pretty simply and easily, but the number of records varies from day to day.  On any given day I may have zero or more entries for food, water, and exercise, and I may have zero or one entry for weight & notes.
