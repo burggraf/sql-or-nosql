@@ -78,4 +78,5 @@ water: [
 {time: "19:05", qty: 1}
 ],
 exercise: [{time: "11:02", duration: 0.5, type: "Walking"}]
+}
 ```
