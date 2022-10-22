@@ -22,6 +22,7 @@ Each day I track the food I eat, along with the number of calories in each item:
 I also track the number of cups of water I drink and when I drink them:
 
 | Day    | Time  | Cups |
+|--------|-------|------|
 | Jan 01 | 08:15 | 1    |
 | Jan 01 | 09:31 | 1    |
 | Jan 01 | 10:42 | 2    |
@@ -34,6 +35,7 @@ I also track the number of cups of water I drink and when I drink them:
 And finally I track my exercise:
 
 | Day    | Time  | Duration | Exercise |
+|--------|-------|----------|----------|
 | Jan 01 | 11:02 | 0.5 | Walking |
 | Jan 02 | 09:44 | 0.75 | Bicycling |
 | Jan 02 | 17:00 | 0.25 | Walking |
