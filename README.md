@@ -55,28 +55,28 @@ That's a lot of different data that needs to be gathered, stored, retrieved, and
 In my app, I gather all the data for a single day on one page, to make it easier for my users.  So I get a JSON object for each day that looks like this:
 
 ```json
-{ date: "2022-01-01", weight: 172.6, notes: "This new diet is awesome!", 
-food: [
-{ title: "Apple", calories: 72, meal: "Breakfast"},
-{ title: "Oatmeal", calories: 146, meal: "Breakfast"},
-{ title: "Sandwich", calories: 445, meal: "Lunch"},
-{ title: "Chips", calories: 280, meal: "Lunch"},
-{ title: "Cookie", calories: 108, meal: "Lunch"},
-{ title: "Mixed Nuts", calories: 175, meal: "Snack"},
-{ title: "Pasta/Sauce", calories: 380, meal: "Dinner"},
-{ title: "Garlic Bread", calories: 200, meal: "Dinner"},
-{ title: "Broccoli", calories: 32, meal: "Dinner"}],
-water: [
-{time: "08:15", qty: 1},
-{time: "09:31", qty: 1},
-{time: "10:42", qty: 1},
-{time: "10:42", qty: 1},
-{time: "12:07", qty: 1},
-{time: "14:58", qty: 1},
-{time: "17:15", qty: 1},
-{time: "18:40", qty: 1},
-{time: "19:05", qty: 1}
+{ "date": "2022-01-01", "weight": 172.6, "notes": "This new diet is awesome!", 
+"food": [
+{ "title": "Apple", "calories": 72, "meal": "Breakfast"},
+{ "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
+{ "title": "Sandwich", "calories": 445, "meal": "Lunch"},
+{ "title": "Chips", "calories": 280, "meal": "Lunch"},
+{ "title": "Cookie", "calories": 108, "meal": "Lunch"},
+{ "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
+{ "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
+{ "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
+{ "title": "Broccoli", "calories": 32, "meal": "Dinner"}],
+"water": [
+{"time": "08:15", "qty": 1},
+{"time": "09:31", "qty": 1},
+{"time": "10:42", "qty": 2},
+{"time": "10:42", "qty": 2},
+{"time": "12:07", "qty": 1},
+{"time": "14:58", "qty": 1},
+{"time: "17:15", "qty": 1},
+{"time": "18:40", "qty": 1},
+{"time": "19:05", "qty": 1}
 ],
-exercise: [{time: "11:02", duration: 0.5, type: "Walking"}]
+"exercise": [{"time": "11:02", "duration": 0.5, "type": "Walking"}]
 }
 ```
