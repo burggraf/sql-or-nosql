@@ -8,6 +8,7 @@ There are tradeoffs with both SQL and NoSQL solutions.  Typically it's easier to
 Each day I track the food I eat, along with the number of calories in each item:
 
 | Day    | Food Item | Calories | Meal |
+|--------|-----------|----------|------|
 | 01 Jan | Apple     | 72 | Breakfast |
 | 01 Jan | Oatmeal   | 146 | Breakfast |
 | 01 Jan | Sandwich  | 445 | Lunch |
