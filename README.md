@@ -78,5 +78,18 @@ In my app, I gather all the data for a single day on one page, to make it easier
 ```
 
 ### Saving the Data
-Once we've gathered all the data for a day we need to store it in our database.
+Once we've gathered all the data for a day we need to store it in our database.  In a NoSQL database, this can be a pretty easy process, as we can just create a record (document) for a specific user for a specific date and throw document into a collection and we're done.  With SQL, we have some structure we have to work within, and in this case it looks like 4 separate tables: food, water, exercise, and notes.  We'd want to do 4 separate inserts here, one for each table.  If we don't have data for a specific table (say no exercise was recorded today) then we can skip that table.
 
+If you're using SQL to store this data, you might want to save each table's data as it's entered in your data entry form (and not wait until all the data is entered.)  Or you might want to create a database function that takes all the JSON data, parses it, and writes it to all the related tables in a single transaction.  There's a lot of ways to handle this, but suffice it to say this: it's a bit more complicated than saving the data in a NoSQL database.
+
+### Retrieving the Data
+If we want to display all the data for a single day, it's pretty much the same.  With NoSQL you can grab the data for the user's day and then use it in your application.  Nice!  With SQL we need to query 4 tables to get all the data (or we could use a function to get it all in a single call.)  Of course, when displaying the data, we'd need to first break up our JSON data into pieces that are needed by each section of our dashboard screen, and you could argue that it's simpler to map each SQL table with the dashboard section on the screen, but that's a pretty trivial point.
+
+### Analyzing the Data
+Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  Let display a graph of how many total calories I've eaten over the past month.  With SQL, this is a really simple task:
+
+```sql
+select sum(calories) as total_calories, day from food_log group by day where user_id = 'x' and day between '2022-01-01' and '2022-01-31' order by day;
+```
+
+Bam!  Done!  Now we can send those results to our graphing library and 
