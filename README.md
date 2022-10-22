@@ -73,7 +73,7 @@ In my app, I gather all the data for a single day on one page, to make it easier
 {"time": "10:42", "qty": 2},
 {"time": "12:07", "qty": 1},
 {"time": "14:58", "qty": 1},
-{"time: "17:15", "qty": 1},
+{"time": "17:15", "qty": 1},
 {"time": "18:40", "qty": 1},
 {"time": "19:05", "qty": 1}
 ],
