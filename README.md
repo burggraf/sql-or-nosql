@@ -92,4 +92,15 @@ Now that we've saved the data and we can retrieve it and display it, let's use i
 select sum(calories) as total_calories, day from food_log group by day where user_id = 'x' and day between '2022-01-01' and '2022-01-31' order by day;
 ```
 
-Bam!  Done!  Now we can send those results to our graphing library and 
+Bam!  Done!  Now we can send those results to our graphing library and make a nice pretty picture of my eating habits.
+
+But if we've stored this data in NoSQL, it gets a little more complicated.  We'll need to:
+
+- grab all the data for the user for the month
+- parse each day's data to get the food log information
+- loop through each day and total the calories
+- send the aggregate data to our graphing module
+
+If this is something we're going to do regularly, it makes sense to calculate the total calories for each day and store it in the day's document so we can get at that data faster.  But that requires more work up front, and we still need to pull the data for each day and parse out that calorie total first.  And if we update the data we still need to recalculate things and update that total.  Eventually we'll want to do that with the water and exercise totals as well.  The code will eventually start to get longer and more complex.
+
+
