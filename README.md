@@ -89,7 +89,7 @@ If we want to display all the data for a single day, it's pretty much the same. 
 Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  Let display a graph of how many total calories I've eaten over the past month.  With SQL, this is a really simple task:
 
 ```sql
-select sum(calories) as total_calories, day from food_log group by day where user_id = 'x' and day between '2022-01-01' and '2022-01-31' order by day;
+select sum(calories) as total_calories, day from food_log group by date where user_id = 'x' and day between '2022-01-01' and '2022-01-31' order by date;
 ```
 
 Bam!  Done!  Now we can send those results to our graphing library and make a nice pretty picture of my eating habits.
