@@ -114,17 +114,43 @@ Let's see how we can use the power of SQL together with the ease-of-use of NoSQL
 ```sql
 CREATE TABLE calendar (
     id uuid DEFAULT uuid_generate_v4() NOT NULL,
-    created_at timestamp with time zone DEFAULT now(),
     date date,
+    user_id uuid NOT NULL,
+    weight numeric,
     notes text,
     food_log jsonb,
     water_log jsonb,
-    activity_log jsonb,
-    weight numeric,
-    user_id uuid NOT NULL
+    activity_log jsonb
 );
 -- create a foreign key relationship for the user_id field 
 ALTER TABLE ONLY calendar
     ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
+```
+
+Now let's insert some data into the table:
+
+```sql
+INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, activity_log)
+VALUES (
+'2022-01-01', '54ebe7f1-a1ea-4837-97bc-c880914a3392', 172.6, 'This new diet is awesome!',
+'[{ "title": "Apple", "calories": 72, "meal": "Breakfast"},
+  { "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
+  { "title": "Sandwich", "calories": 445, "meal": "Lunch"},
+  { "title": "Chips", "calories": 280, "meal": "Lunch"},
+  { "title": "Cookie", "calories": 108, "meal": "Lunch"},
+  { "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
+  { "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
+  { "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
+  { "title": "Broccoli", "calories": 32, "meal": "Dinner"}]',
+'[{"time": "08:15", "qty": 1},
+  {"time": "09:31", "qty": 1},
+  {"time": "10:42", "qty": 2},
+  {"time": "10:42", "qty": 2},
+  {"time": "12:07", "qty": 1},
+  {"time": "14:58", "qty": 1},
+  {"time": "17:15", "qty": 1},
+  {"time": "18:40", "qty": 1},
+  {"time": "19:05", "qty": 1}]',
+'[{"time": "11:02", "duration": 0.5, "type": "Walking"}]');
 ```
 
