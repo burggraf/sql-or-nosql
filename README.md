@@ -86,7 +86,7 @@ If you're using SQL to store this data, you might want to save each table's data
 If we want to display all the data for a single day, it's pretty much the same.  With NoSQL you can grab the data for the user's day and then use it in your application.  Nice!  With SQL we need to query 4 tables to get all the data (or we could use a function to get it all in a single call.)  Of course, when displaying the data, we'd need to first break up our JSON data into pieces that are needed by each section of our dashboard screen, and you could argue that it's simpler to map each SQL table with the dashboard section on the screen, but that's a pretty trivial point.
 
 ### Analyzing the Data
-Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  Let display a graph of how many total calories I've eaten over the past month.  With SQL, this is a really simple task:
+Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  *Let's display a graph of how many total calories I've eaten over the past month.*  With SQL, this is a really simple task:
 
 ```sql
 select 
@@ -127,7 +127,7 @@ ALTER TABLE ONLY calendar
     ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ```
 
-Now let's insert some data into the table:
+Now let's insert some data into the table.  For the JSONB fields (`food_log`, `water_log`, and `activity_log`) we'll just dump the `JSON` data we got from our app right into those fields as a string:
 
 ```sql
 INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, activity_log)
@@ -153,4 +153,92 @@ VALUES (
   {"time": "19:05", "qty": 1}]',
 '[{"time": "11:02", "duration": 0.5, "type": "Walking"}]');
 ```
+
+While that's a pretty big insert statement, it sure beats doing inserts on 4 separate tables.  With all those food entries and water log entries, we would have had to made 1 entry in the main table, then 9 food_log entries, 9 water_log entries, and one exercise_log entry for a total of 20 database records.  We've wrapped that into a single record.
+
+### But How Do We Query This Data?
+Great, we're collecting the data now, and it's pretty easy to insert the data into the database.  Editing the data isn't too bad either, because we're just downloading the data to the client, updating the JSON field(s) as needed, and throwing them back into the database.  Not too hard.  But how can I query this data?  What about that task from before? *Let's display a graph of how many total calories I've eaten over the past month.*
+
+In this case, that data is stored inside the `food_log` field inside the `calendar` table.  If only PostgreSQL had a way of converting JSONB arrays into individual database records (recordsets).  Well, it does!  The `jsonb_array_elements` function will do this for us, allowing to create a simple table we can use to calculate our caloric intake.
+
+Here's some SQL to turn that `food_log` array into individual output records:
+
+```sql
+select 
+  user_id,
+  date,
+  jsonb_array_elements(food_log)->>'title' as title,
+  jsonb_array_elements(food_log)->'calories' as calories,
+  jsonb_array_elements(food_log)->'meal' as meal
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31';
+```
+
+This returns a table that looks like this:
+
+| date       | title        | calories | meal      |
+| ---------- | ------------ | -------- | --------- |
+| 2022-01-01 | Apple        | 72       | Breakfast |
+| 2022-01-01 | Oatmeal      | 146      | Breakfast |
+| 2022-01-01 | Sandwich     | 445      | Lunch     |
+| 2022-01-01 | Chips        | 280      | Lunch     |
+| 2022-01-01 | Cookie       | 108      | Lunch     |
+| 2022-01-01 | Mixed Nuts   | 175      | Snack     |
+| 2022-01-01 | Pasta/Sauce  | 380      | Dinner    |
+| 2022-01-01 | Garlic Bread | 200      | Dinner    |
+| 2022-01-01 | Broccoli     | 32       | Dinner    |
+
+A couple things to note:
+
+- `jsonb_array_elements(food_log)->>'title' as title` this returns a text field, since the `->>` returns TEXT
+- `jsonb_array_elements(food_log)->'calories' as calories` this returns a JSON object
+
+If we want to `sum` the calories to get some totals, we can't have a JSON object, so we need to cast that to something more useful, like an `INTEGER`:
+
+- `(jsonb_array_elements(food_log)->'calories')::INTEGER as calories` this returns an INTEGER
+
+Now we can't just throw the `sum` operator on this to get the total calories by day.  If we try this:
+
+```sql
+select 
+  date,
+  SUM((jsonb_array_elements(food_log)->'calories')::integer) as total_calories
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31'
+group by date;
+```
+
+we get an error back from PostgreSQL: **Failed to run sql query: aggregate function calls cannot contain set-returning function calls**.
+
+Instead, we need to think of this as a set of building blocks, where our first SQL statement returns a table:
+
+```sql
+select 
+  date,
+  (jsonb_array_elements(food_log)->'calories')::integer as calories
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31';
+```
+
+Now we can take that "table" statement, throw some (parenthesis) around it, and query **it**:
+
+```sql
+select date, sum(calories) from 
+   (
+      select 
+        date,
+        jsonb_array_elements(food_log)->>'title' as title,
+        (jsonb_array_elements(food_log)->'calories')::integer as calories
+      from calendar 
+      where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+         and date between '2022-01-01' and '2022-01-31'
+   ) 
+as days group by date;
+```
+
+This gives us exactly what we want:
+
+| date       | sum  |
+| ---------- | ---- |
+| 2022-01-01 | 1838 |
+
+If we add more data for the rest of the days of the month, we'll have all the data we need for a beautiful graph.
+
 
