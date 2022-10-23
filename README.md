@@ -108,4 +108,23 @@ But if we've stored this data in NoSQL, it gets a little more complicated.  We'l
 
 If this is something we're going to do regularly, it makes sense to calculate the total calories for each day and store it in the day's document so we can get at that data faster.  But that requires more work up front, and we still need to pull the data for each day and parse out that calorie total first.  And if we update the data we still need to recalculate things and update that total.  Eventually we'll want to do that with the water and exercise totals as well.  The code will eventually start to get longer and more complex.
 
+### SQL and NoSQL Together - FTW
+Let's see how we can use the power of SQL together with the ease-of-use of NoSQL together in the same database to make this all a bit easier.  We'll create a table for each day of data (for each user) and store the basic fields such as `weight` and `notes` first.  Then we'll just throw the `food_log`, `water_log`, and `exercise_log` fields in a `JSONB` field.
+
+```sql
+CREATE TABLE calendar (
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    date date,
+    notes text,
+    food_log jsonb,
+    water_log jsonb,
+    activity_log jsonb,
+    weight numeric,
+    user_id uuid NOT NULL
+);
+-- create a foreign key relationship for the user_id field 
+ALTER TABLE ONLY calendar
+    ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
+```
 
