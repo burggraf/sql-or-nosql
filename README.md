@@ -3,7 +3,7 @@
 It's a tough decision for any developer starting a new project.  Should you store your data in a standard, time-tested SQL database, or go with one of the newer NoSQL document-based databases?  This seemingly simple decision can literally make or break your project down the line.  Choose correctly and structure your data well, and you may sail smoothly into production and watch your app take off.  Make the wrong choice and you could be headed for nightmares (and maybe even some major re-writes) before your app ever makes it out the door.
 
 ### Simplicity vs Power
-There are tradeoffs with both SQL and NoSQL solutions.  Typically it's easier to get started with NoSQL data structures, especially when the data is complex or hierarchical.  You can just take a JSON data object from your front end code and throw it in the database, and be done with it.  But later when you need to access that data to answer some basic business questions, it's much more difficult.  A SQL solution makes it easier to gather data and draw conclusions down the line.  Let's look at an example:
+There are tradeoffs with both SQL and NoSQL solutions.  Typically it's easier to get started with NoSQL data structures, especially when the data is complex or hierarchical.  You can just take a JSON data object from your front-end code and throw it in the database and be done with it.  But later when you need to access that data to answer some basic business questions, it's much more difficult.  A SQL solution makes it easier to gather data and draw conclusions down the line.  Let's look at an example:
 
 Each day I track the food I eat, along with the number of calories in each item:
 
@@ -32,7 +32,7 @@ I also track the number of cups of water I drink and when I drink them:
 | Jan 01 | 18:40 | 1    |
 | Jan 01 | 19:05 | 1    |
 
-And finally I track my exercise:
+And finally, I track my exercise:
 
 | Day    | Time  | Duration | Exercise |
 |--------|-------|----------|----------|
@@ -50,9 +50,9 @@ For each day I also track my current weight along with any notes for the day:
 | Feb 01 | 168.0  | I feel better, but sure miss all that greasy food. |
 
 ### Gathering All That Data
-That's a lot of different data that needs to be gathered, stored, retrieved, and later analyzed.  It's organzied pretty simply and easily, but the number of records varies from day to day.  On any given day I may have zero or more entries for food, water, and exercise, and I may have zero or one entry for weight & notes.
+That's a lot of different data that needs to be gathered, stored, retrieved, and later analyzed.  It's organized simply and easily, but the number of records varies from day to day.  On any given day I may have zero or more entries for food, water, and exercise, and I may have zero or one entry for weight & notes.
 
-In my app, I gather all the data for a single day on one page, to make it easier for my users.  So I get a JSON object for each day that looks like this:
+In my app, I gather all the data for a single day on one page, to make it easier for my users.  So, I get a JSON object for each day that looks like this:
 
 ```json
 { "date": "2022-01-01", "weight": 172.6, "notes": "This new diet is awesome!", 
@@ -78,15 +78,15 @@ In my app, I gather all the data for a single day on one page, to make it easier
 ```
 
 ### Saving the Data
-Once we've gathered all the data for a day we need to store it in our database.  In a NoSQL database, this can be a pretty easy process, as we can just create a record (document) for a specific user for a specific date and throw document into a collection and we're done.  With SQL, we have some structure we have to work within, and in this case it looks like 4 separate tables: food, water, exercise, and notes.  We'd want to do 4 separate inserts here, one for each table.  If we don't have data for a specific table (say no exercise was recorded today) then we can skip that table.
+Once we've gathered all the data for a day, we need to store it in our database.  In a NoSQL database, this can be a pretty easy process, as we can just create a record (document) for a specific user for a specific date and throw document into a collection and we're done.  With SQL, we have some structure we have to work within, and in this case it looks like 4 separate tables: food, water, exercise, and notes.  We'd want to do 4 separate inserts here, one for each table.  If we don't have data for a specific table (say no exercise was recorded today) then we can skip that table.
 
 If you're using SQL to store this data, you might want to save each table's data as it's entered in your data entry form (and not wait until all the data is entered.)  Or you might want to create a database function that takes all the JSON data, parses it, and writes it to all the related tables in a single transaction.  There's a lot of ways to handle this, but suffice it to say this: it's a bit more complicated than saving the data in a NoSQL database.
 
 ### Retrieving the Data
-If we want to display all the data for a single day, it's pretty much the same.  With NoSQL you can grab the data for the user's day and then use it in your application.  Nice!  With SQL we need to query 4 tables to get all the data (or we could use a function to get it all in a single call.)  Of course, when displaying the data, we'd need to first break up our JSON data into pieces that are needed by each section of our dashboard screen, and you could argue that it's simpler to map each SQL table with the dashboard section on the screen, but that's a pretty trivial point.
+If we want to display all the data for a single day, it's pretty much the same.  With NoSQL you can grab the data for the user's day and then use it in your application.  Nice!  With SQL we need to query 4 tables to get all the data (or we could use a function to get it all in a single call.)  Of course, when displaying the data, we'd need to first break up our JSON data into pieces that are needed by each section of our dashboard screen, and you could argue that it's simpler to map each SQL table with the dashboard section on the screen, but that's a trivial point.
 
 ### Analyzing the Data
-Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  *Let's display a graph of how many total calories I've eaten over the past month.*  With SQL, this is a really simple task:
+Now that we've saved the data and we can retrieve it and display it, let's use it for some analysis.  *Let's display a graph of how many total calories I've eaten over the past month.*  With SQL, this is a simple task:
 
 ```sql
 select 
@@ -154,10 +154,10 @@ VALUES (
 '[{"time": "11:02", "duration": 0.5, "type": "Walking"}]');
 ```
 
-While that's a pretty big insert statement, it sure beats doing inserts on 4 separate tables.  With all those food entries and water log entries, we would have had to made 1 entry in the main table, then 9 food_log entries, 9 water_log entries, and one exercise_log entry for a total of 20 database records.  We've wrapped that into a single record.
+While that's a big insert statement, it sure beats doing inserts on 4 separate tables.  With all those food entries and water log entries, we would have had to made 1 entry in the main table, then 9 food_log entries, 9 water_log entries, and one exercise_log entry for a total of 20 database records.  We've wrapped that into a single record.
 
 ### But How Do We Query This Data?
-Great, we're collecting the data now, and it's pretty easy to insert the data into the database.  Editing the data isn't too bad either, because we're just downloading the data to the client, updating the JSON field(s) as needed, and throwing them back into the database.  Not too hard.  But how can I query this data?  What about that task from before? *Let's display a graph of how many total calories I've eaten over the past month.*
+Great, we're collecting the data now, and it's easy to insert the data into the database.  Editing the data isn't too bad either because we're just downloading the data to the client, updating the JSON field(s) as needed, and throwing them back into the database.  Not too hard.  But how can I query this data?  What about that task from before? *Let's display a graph of how many total calories I've eaten over the past month.*
 
 In this case, that data is stored inside the `food_log` field inside the `calendar` table.  If only PostgreSQL had a way of converting JSONB arrays into individual database records (recordsets).  Well, it does!  The `jsonb_array_elements` function will do this for us, allowing to create a simple table we can use to calculate our caloric intake.
 
@@ -275,5 +275,5 @@ which gives us:
 | Garlic Bread | 200      |
 
 ### Conclusion
-If we take a little time to study the [JSON Functions and Operators](https://www.postgresql.org/docs/9.5/functions-json.html) that PostgreSQL offers, we can turn Postgres into an easy-to-use NoSQL database that still retains all the power of SQL.  This gives us a super easy way to store our complex JSON data coming from our application code in our database.  Then we can use powerful SQL capablities to analyze and present that data in our application.  It's the best of both worlds!
+If we take a little time to study the [JSON Functions and Operators](https://www.postgresql.org/docs/9.5/functions-json.html) that PostgreSQL offers, we can turn Postgres into an easy-to-use NoSQL database that still retains all the power of SQL.  This gives us a super easy way to store our complex JSON data coming from our application code in our database.  Then we can use powerful SQL capabilities to analyze and present that data in our application.  It's the best of both worlds!
 
