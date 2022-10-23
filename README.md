@@ -93,7 +93,7 @@ select
    date, sum(calories) as total_calories 
 from food_log 
 group by date 
-where user_id = 'x' and day between '2022-01-01' and '2022-01-31' 
+where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and day between '2022-01-01' and '2022-01-31' 
 order by date;
 ```
 
@@ -224,7 +224,6 @@ select date, sum(calories) from
    (
       select 
         date,
-        jsonb_array_elements(food_log)->>'title' as title,
         (jsonb_array_elements(food_log)->'calories')::integer as calories
       from calendar 
       where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
@@ -241,4 +240,40 @@ This gives us exactly what we want:
 
 If we add more data for the rest of the days of the month, we'll have all the data we need for a beautiful graph.
 
+### Searching the Data
+What if we want to answer the question: *How many calories were in the garlic bread I ate last month?*  This data is stored inside the `food_log` field in the `calendar` table.  We can use the same type of query we used before to "flatten" the `food_log` data so we can search it.
+
+To get every item I ate during the month of January, we can use:
+
+```sql
+select 
+  date,
+  jsonb_array_elements(food_log)->>'title' as title,
+  (jsonb_array_elements(food_log)->'calories')::integer as calories
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31'
+```
+
+Now to search for the **garlic bread** we can just put (parenthesis) around this to make a "table" and then search for the item we want:
+
+```sql
+select title, calories from
+(
+   select 
+     date,
+     jsonb_array_elements(food_log)->>'title' as title,
+     (jsonb_array_elements(food_log)->'calories')::integer as calories
+   from calendar 
+   where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+   and date between '2022-01-01' and '2022-01-31'
+) as my_food 
+where title = 'Garlic Bread';
+```
+which gives us:
+
+| title        | calories |
+| ------------ | -------- |
+| Garlic Bread | 200      |
+
+### Conclusion
+If we take a little time to study the [JSON Functions and Operators](https://www.postgresql.org/docs/9.5/functions-json.html) that PostgreSQL offers, we can turn Postgres into an easy-to-use NoSQL database that still retains all the power of SQL.  This gives us a super easy way to store our complex JSON data coming from our application code in our database.  Then we can use powerful SQL capablities to analyze and present that data in our application.  It's the best of both worlds!
 
