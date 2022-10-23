@@ -189,8 +189,8 @@ This returns a table that looks like this:
 
 A couple things to note:
 
-- `jsonb_array_elements(food_log)->>'title' as title` this returns a text field, since the `->>` returns TEXT
-- `jsonb_array_elements(food_log)->'calories' as calories` this returns a JSON object
+- `jsonb_array_elements(food_log)->>'title' as title` this returns a text field, since the `->>` operator returns TEXT
+- `jsonb_array_elements(food_log)->'calories' as calories` this returns a JSON object, since the '->' operator return JSON
 
 If we want to `sum` the calories to get some totals, we can't have a JSON object, so we need to cast that to something more useful, like an `INTEGER`:
 
