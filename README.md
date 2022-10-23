@@ -120,17 +120,17 @@ CREATE TABLE calendar (
     notes text,
     food_log jsonb,
     water_log jsonb,
-    activity_log jsonb
+    exercise_log jsonb
 );
 -- create a foreign key relationship for the user_id field 
 ALTER TABLE ONLY calendar
     ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ```
 
-Now let's insert some data into the table.  For the JSONB fields (`food_log`, `water_log`, and `activity_log`) we'll just dump the `JSON` data we got from our app right into those fields as a string:
+Now let's insert some data into the table.  For the JSONB fields (`food_log`, `water_log`, and `exercise`) we'll just dump the `JSON` data we got from our app right into those fields as a string:
 
 ```sql
-INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, activity_log)
+INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, exercise_log)
 VALUES (
 '2022-01-01', '54ebe7f1-a1ea-4837-97bc-c880914a3392', 172.6, 'This new diet is awesome!',
 '[{ "title": "Apple", "calories": 72, "meal": "Breakfast"},
