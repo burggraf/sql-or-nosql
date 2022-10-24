@@ -102,7 +102,7 @@ select
    date, sum(calories) as total_calories 
 from food_log 
 group by date 
-where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and day between '2022-01-01' and '2022-01-31' 
+where user_id = 'xyz' and day between '2022-01-01' and '2022-01-31' 
 order by date;
 ```
 
@@ -142,7 +142,7 @@ Now let's insert some data into the table.  PostgreSQL offers both JSON and JSON
 insert into calendar (date, user_id, weight, notes, food_log, water_log, exercise_log)
 values (
    '2022-01-01', 
-   '54ebe7f1-a1ea-4837-97bc-c880914a3392', 
+   'xyz', 
    172.6, 
    'This new diet is awesome!',
    '[
@@ -190,7 +190,7 @@ select
   jsonb_array_elements(food_log)->'calories' as calories,
   jsonb_array_elements(food_log)->'meal' as meal
 from calendar 
-where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+where user_id = 'xyz' 
    and date between '2022-01-01' and '2022-01-31';
 ```
 
@@ -223,7 +223,7 @@ Now we can't just throw the `sum` operator on this to get the total calories by 
 select 
   date,
   sum((jsonb_array_elements(food_log)->'calories')::integer) as total_calories
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+from calendar where user_id = 'xyz' 
       and date between '2022-01-01' and '2022-01-31'
 group by date;
 ```
@@ -236,7 +236,7 @@ Instead, we need to think of this as a set of building blocks, where our first S
 select 
   date,
   (jsonb_array_elements(food_log)->'calories')::integer as calories
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+from calendar where user_id = 'xyz' 
       and date between '2022-01-01' and '2022-01-31';
 ```
 
@@ -249,7 +249,7 @@ with data as
         date,
         (jsonb_array_elements(food_log)->'calories')::integer as calories
       from calendar 
-      where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+      where user_id = 'xyz' 
          and date between '2022-01-01' and '2022-01-31'
    ) 
 select date, sum(calories) from 
@@ -275,7 +275,7 @@ select
   jsonb_array_elements(food_log)->>'title' as title,
   (jsonb_array_elements(food_log)->'calories')::integer as calories
 from calendar 
-where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+where user_id = 'xyz' 
    and date between '2022-01-01' and '2022-01-31'
 ```
 
@@ -289,7 +289,7 @@ with my_food as
      jsonb_array_elements(food_log)->>'title' as title,
      (jsonb_array_elements(food_log)->'calories')::integer as calories
    from calendar 
-   where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+   where user_id = 'xyz' 
    and date between '2022-01-01' and '2022-01-31'
 ) 
 select title, calories 
