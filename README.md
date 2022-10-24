@@ -136,11 +136,11 @@ ALTER TABLE ONLY calendar
     ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ```
 
-Now let's insert some data into the table.  For the JSONB fields (`food_log`, `water_log`, and `exercise`) we'll just dump the `JSON` data we got from our app right into those fields as a string:
+Now let's insert some data into the table.  PostgreSQL offers both JSON and JSONB fields, and since the latter are more optimized by the database and much faster for query processing, we’ll almost always want to use JSONB.  We’ll use JSONB fields for `food_log`, `water_log`, and `exercise_log` and just dump the data we got from our app right into those fields as a string:
 
 ```sql
-INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, exercise_log)
-VALUES (
+insert into calendar (date, user_id, weight, notes, food_log, water_log, exercise_log)
+values (
    '2022-01-01', 
    '54ebe7f1-a1ea-4837-97bc-c880914a3392', 
    172.6, 
@@ -189,7 +189,9 @@ select
   jsonb_array_elements(food_log)->>'title' as title,
   jsonb_array_elements(food_log)->'calories' as calories,
   jsonb_array_elements(food_log)->'meal' as meal
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31';
+from calendar 
+where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+   and date between '2022-01-01' and '2022-01-31';
 ```
 
 This returns a table that looks like this:
@@ -220,7 +222,7 @@ Now we can't just throw the `sum` operator on this to get the total calories by 
 ```sql
 select 
   date,
-  SUM((jsonb_array_elements(food_log)->'calories')::integer) as total_calories
+  sum((jsonb_array_elements(food_log)->'calories')::integer) as total_calories
 from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
       and date between '2022-01-01' and '2022-01-31'
 group by date;
@@ -241,7 +243,7 @@ from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392'
 Now we can take that "table" statement, throw some (parenthesis) around it, and query **it**:
 
 ```sql
-select date, sum(calories) from 
+with data as
    (
       select 
         date,
@@ -250,7 +252,8 @@ select date, sum(calories) from
       where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
          and date between '2022-01-01' and '2022-01-31'
    ) 
-as days group by date;
+select date, sum(calories) from 
+   data group by date;
 ```
 
 This gives us exactly what we want:
@@ -279,7 +282,7 @@ where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392'
 Now to search for the **garlic bread** we can just put (parenthesis) around this to make a "table" and then search for the item we want:
 
 ```sql
-select title, calories from
+with my_food as 
 (
    select 
      date,
@@ -288,7 +291,9 @@ select title, calories from
    from calendar 
    where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
    and date between '2022-01-01' and '2022-01-31'
-) as my_food 
+) 
+select title, calories 
+from my_food 
 where title = 'Garlic Bread';
 ```
 which gives us:
