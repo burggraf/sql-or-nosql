@@ -55,26 +55,35 @@ That's a lot of different data that needs to be gathered, stored, retrieved, and
 In my app, I gather all the data for a single day on one page, to make it easier for my users.  So, I get a JSON object for each day that looks like this:
 
 ```json
-{ "date": "2022-01-01", "weight": 172.6, "notes": "This new diet is awesome!", 
-"food": [{ "title": "Apple", "calories": 72, "meal": "Breakfast"},
-{ "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
-{ "title": "Sandwich", "calories": 445, "meal": "Lunch"},
-{ "title": "Chips", "calories": 280, "meal": "Lunch"},
-{ "title": "Cookie", "calories": 108, "meal": "Lunch"},
-{ "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
-{ "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
-{ "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
-{ "title": "Broccoli", "calories": 32, "meal": "Dinner"}],
-"water": [{"time": "08:15", "qty": 1},
-{"time": "09:31", "qty": 1},
-{"time": "10:42", "qty": 2},
-{"time": "10:42", "qty": 2},
-{"time": "12:07", "qty": 1},
-{"time": "14:58", "qty": 1},
-{"time": "17:15", "qty": 1},
-{"time": "18:40", "qty": 1},
-{"time": "19:05", "qty": 1}],
-"exercise": [{"time": "11:02", "duration": 0.5, "type": "Walking"}]}
+{ "date": "2022-01-01", 
+  "weight": 172.6, 
+  "notes": "This new diet is awesome!", 
+  "food": [
+      { "title": "Apple", "calories": 72, "meal": "Breakfast"},
+      { "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
+      { "title": "Sandwich", "calories": 445, "meal": "Lunch"},
+      { "title": "Chips", "calories": 280, "meal": "Lunch"},
+      { "title": "Cookie", "calories": 108, "meal": "Lunch"},
+      { "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
+      { "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
+      { "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
+      { "title": "Broccoli", "calories": 32, "meal": "Dinner"}
+  ],
+  "water": [
+      {"time": "08:15", "qty": 1},
+      {"time": "09:31", "qty": 1},
+      {"time": "10:42", "qty": 2},
+      {"time": "10:42", "qty": 2},
+      {"time": "12:07", "qty": 1},
+      {"time": "14:58", "qty": 1},
+      {"time": "17:15", "qty": 1},
+      {"time": "18:40", "qty": 1},
+      {"time": "19:05", "qty": 1}
+  ],
+  "exercise": [
+      {"time": "11:02", "duration": 0.5, "type": "Walking"}
+   ]
+}
 ```
 
 ### Saving the Data
@@ -122,7 +131,7 @@ CREATE TABLE calendar (
     water_log jsonb,
     exercise_log jsonb
 );
--- create a foreign key relationship for the user_id field 
+-- (Optional) - create a foreign key relationship for the user_id field 
 ALTER TABLE ONLY calendar
     ADD CONSTRAINT calendar_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id);
 ```
@@ -132,26 +141,36 @@ Now let's insert some data into the table.  For the JSONB fields (`food_log`, `w
 ```sql
 INSERT INTO calendar (date, user_id, weight, notes, food_log, water_log, exercise_log)
 VALUES (
-'2022-01-01', '54ebe7f1-a1ea-4837-97bc-c880914a3392', 172.6, 'This new diet is awesome!',
-'[{ "title": "Apple", "calories": 72, "meal": "Breakfast"},
-  { "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
-  { "title": "Sandwich", "calories": 445, "meal": "Lunch"},
-  { "title": "Chips", "calories": 280, "meal": "Lunch"},
-  { "title": "Cookie", "calories": 108, "meal": "Lunch"},
-  { "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
-  { "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
-  { "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
-  { "title": "Broccoli", "calories": 32, "meal": "Dinner"}]',
-'[{"time": "08:15", "qty": 1},
-  {"time": "09:31", "qty": 1},
-  {"time": "10:42", "qty": 2},
-  {"time": "10:42", "qty": 2},
-  {"time": "12:07", "qty": 1},
-  {"time": "14:58", "qty": 1},
-  {"time": "17:15", "qty": 1},
-  {"time": "18:40", "qty": 1},
-  {"time": "19:05", "qty": 1}]',
-'[{"time": "11:02", "duration": 0.5, "type": "Walking"}]');
+   '2022-01-01', 
+   '54ebe7f1-a1ea-4837-97bc-c880914a3392', 
+   172.6, 
+   'This new diet is awesome!',
+   '[
+      { "title": "Apple", "calories": 72, "meal": "Breakfast"},
+      { "title": "Oatmeal", "calories": 146, "meal": "Breakfast"},
+      { "title": "Sandwich", "calories": 445, "meal": "Lunch"},
+      { "title": "Chips", "calories": 280, "meal": "Lunch"},
+      { "title": "Cookie", "calories": 108, "meal": "Lunch"},
+      { "title": "Mixed Nuts", "calories": 175, "meal": "Snack"},
+      { "title": "Pasta/Sauce", "calories": 380, "meal": "Dinner"},
+      { "title": "Garlic Bread", "calories": 200, "meal": "Dinner"},
+      { "title": "Broccoli", "calories": 32, "meal": "Dinner"}
+     ]',
+   '[
+      {"time": "08:15", "qty": 1},
+      {"time": "09:31", "qty": 1},
+      {"time": "10:42", "qty": 2},
+      {"time": "10:42", "qty": 2},
+      {"time": "12:07", "qty": 1},
+      {"time": "14:58", "qty": 1},
+      {"time": "17:15", "qty": 1},
+      {"time": "18:40", "qty": 1},
+      {"time": "19:05", "qty": 1}
+    ]',
+   '[
+      {"time": "11:02", "duration": 0.5, "type": "Walking"}
+    ]'
+);
 ```
 
 While that's a big insert statement, it sure beats doing inserts on 4 separate tables.  With all those food entries and water log entries, we would have had to made 1 entry in the main table, then 9 food_log entries, 9 water_log entries, and one exercise_log entry for a total of 20 database records.  We've wrapped that into a single record.
@@ -202,7 +221,8 @@ Now we can't just throw the `sum` operator on this to get the total calories by 
 select 
   date,
   SUM((jsonb_array_elements(food_log)->'calories')::integer) as total_calories
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31'
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+      and date between '2022-01-01' and '2022-01-31'
 group by date;
 ```
 
@@ -214,7 +234,8 @@ Instead, we need to think of this as a set of building blocks, where our first S
 select 
   date,
   (jsonb_array_elements(food_log)->'calories')::integer as calories
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31';
+from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+      and date between '2022-01-01' and '2022-01-31';
 ```
 
 Now we can take that "table" statement, throw some (parenthesis) around it, and query **it**:
@@ -250,7 +271,9 @@ select
   date,
   jsonb_array_elements(food_log)->>'title' as title,
   (jsonb_array_elements(food_log)->'calories')::integer as calories
-from calendar where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' and date between '2022-01-01' and '2022-01-31'
+from calendar 
+where user_id = '54ebe7f1-a1ea-4837-97bc-c880914a3392' 
+   and date between '2022-01-01' and '2022-01-31'
 ```
 
 Now to search for the **garlic bread** we can just put (parenthesis) around this to make a "table" and then search for the item we want:
